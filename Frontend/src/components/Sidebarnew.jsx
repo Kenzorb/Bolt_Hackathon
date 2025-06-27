@@ -2,19 +2,17 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, BarChart3, BookOpen, Users, X } from 'lucide-react';
 
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
 const navigation = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Dashboard', href: '/dashboard1', icon: BarChart3 },
   { name: 'Assignments', href: '/assignments1', icon: BookOpen },
+  { name: 'Tasks', href: '/tasks1', icon: Users },
   { name: 'Community', href: '/community1', icon: Users },
+  { name: 'Points & Rewards', href: '/points-rewards1', icon: Users },
+  { name: 'Tools', href: '/tools1', icon: Users },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
 
   return (

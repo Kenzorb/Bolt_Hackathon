@@ -2,11 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, Menu, User, Zap } from 'lucide-react';
 
-interface NavbarProps {
-  onMenuClick: () => void;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
+const Navbar = ({ onMenuClick }) => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 h-16">
       <div className="flex items-center justify-between h-full px-4 lg:px-6">

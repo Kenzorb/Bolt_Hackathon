@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import Navbar from './Navbar';
-import Sidebar from './Sidebar';
+import Navbar from './Navbarnew';
+import Sidebar from './Sidebarnew';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 

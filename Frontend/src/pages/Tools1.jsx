@@ -4,7 +4,7 @@ import { Play, Pause, RotateCcw, Clock, Grid, Lightbulb } from 'lucide-react';
 const Tools1 = () => {
   const [activeTimer, setActiveTimer] = useState(false);
   const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
-  const [timerType, setTimerType] = useState<'work' | 'break'>('work');
+  const [timerType, setTimerType] = useState('work');
 
   useEffect(() => {
     let interval;
