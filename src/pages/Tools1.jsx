@@ -1,32 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Pause, RotateCcw, Clock, Grid, Lightbulb } from 'lucide-react';
 
-const Tools: React.FC = () => {
+const Tools1 = () => {
   const [activeTimer, setActiveTimer] = useState(false);
   const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
   const [timerType, setTimerType] = useState<'work' | 'break'>('work');
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval;
     if (activeTimer && timeLeft > 0) {
       interval = setInterval(() => {
-        setTimeLeft(timeLeft - 1);
+        setTimeLeft(prev => prev - 1);
       }, 1000);
     } else if (timeLeft === 0) {
       setActiveTimer(false);
-      // Switch between work and break
       if (timerType === 'work') {
         setTimerType('break');
-        setTimeLeft(5 * 60); // 5 minute break
+        setTimeLeft(5 * 60);
       } else {
         setTimerType('work');
-        setTimeLeft(25 * 60); // 25 minute work session
+        setTimeLeft(25 * 60);
       }
     }
     return () => clearInterval(interval);
   }, [activeTimer, timeLeft, timerType]);
 
-  const formatTime = (seconds: number) => {
+  const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -68,7 +67,7 @@ const Tools: React.FC = () => {
     }
   ];
 
-  const getQuadrantColor = (quadrant: number) => {
+  const getQuadrantColor = (quadrant) => {
     switch (quadrant) {
       case 1: return 'bg-red-100 border-red-300 text-red-800';
       case 2: return 'bg-green-100 border-green-300 text-green-800';
@@ -78,7 +77,7 @@ const Tools: React.FC = () => {
     }
   };
 
-  const getQuadrantTitle = (quadrant: number) => {
+  const getQuadrantTitle = (quadrant) => {
     switch (quadrant) {
       case 1: return 'Do First (Urgent & Important)';
       case 2: return 'Schedule (Important, Not Urgent)';
@@ -232,4 +231,4 @@ const Tools: React.FC = () => {
   );
 };
 
-export default Tools;
+export default Tools1;

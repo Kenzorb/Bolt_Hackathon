@@ -6,7 +6,7 @@ const quickLinks = [
   {
     title: 'Dashboard',
     description: 'View your progress and statistics',
-    href: '/dashboard',
+    href: '/dashboard1',
     icon: BarChart3,
     color: 'from-primary-500 to-primary-600',
     bgColor: 'bg-primary-50',
@@ -14,7 +14,7 @@ const quickLinks = [
   {
     title: 'Assignments',
     description: 'Submit and check your work',
-    href: '/assignments',
+    href: '/assignments1',
     icon: BookOpen,
     color: 'from-secondary-500 to-secondary-600',
     bgColor: 'bg-secondary-50',
@@ -22,7 +22,7 @@ const quickLinks = [
   {
     title: 'Community',
     description: 'Connect with other students',
-    href: '/community',
+    href: '/community1',
     icon: Users,
     color: 'from-accent-500 to-accent-600',
     bgColor: 'bg-accent-50',
@@ -30,7 +30,7 @@ const quickLinks = [
   {
     title: 'Tasks',
     description: 'Manage your daily tasks',
-    href: '/tasks',
+    href: '/tasks1',
     icon: CheckSquare,
     color: 'from-success-500 to-success-600',
     bgColor: 'bg-success-50',
@@ -38,7 +38,7 @@ const quickLinks = [
   {
     title: 'Points & Rewards',
     description: 'Claim your rewards',
-    href: '/points-rewards',
+    href: '/points-rewards1',
     icon: Gift,
     color: 'from-error-500 to-error-600',
     bgColor: 'bg-error-50',
@@ -46,14 +46,14 @@ const quickLinks = [
   {
     title: 'Tools',
     description: 'Study tools and timers',
-    href: '/tools',
+    href: '/tools1',
     icon: Wrench,
     color: 'from-gray-500 to-gray-600',
     bgColor: 'bg-gray-50',
   },
 ];
 
-const Home: React.FC = () => {
+const Home1 = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Welcome Section */}
@@ -157,4 +157,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Home1;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Users, MessageCircle, Plus, Search, BookOpen, Calculator, Beaker, Globe } from 'lucide-react';
 
-const Community: React.FC = () => {
+const Community1 = () => {
   const [selectedTab, setSelectedTab] = useState('groups');
 
   const studyGroups = [
@@ -111,12 +111,12 @@ const Community: React.FC = () => {
     }
   ];
 
-  const joinGroup = (groupId: number) => {
+  const joinGroup = (groupId) => {
     // In a real app, this would handle joining the group
     alert('Joined group successfully! 🎉');
   };
 
-  const connectWithStudent = (studentId: number) => {
+  const connectWithStudent = (studentId) => {
     // In a real app, this would send a connection request
     alert('Connection request sent! 👋');
   };
@@ -337,4 +337,4 @@ const Community: React.FC = () => {
   );
 };
 
-export default Community;
+export default Community1;

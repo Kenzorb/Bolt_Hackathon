@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Star, Gift, Pin, ShoppingCart, Award, Trophy } from 'lucide-react';
 
-const PointsRewards: React.FC = () => {
+const PointsRewards1 = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [userPoints] = useState(1247);
 
@@ -109,9 +109,9 @@ const PointsRewards: React.FC = () => {
     : rewards.filter(reward => reward.category === selectedCategory);
 
   const pinnedRewards = rewards.filter(reward => reward.pinned);
-  const canAfford = (points: number) => userPoints >= points;
+  const canAfford = (points) => userPoints >= points;
 
-  const claimReward = (rewardId: number) => {
+  const claimReward = (rewardId) => {
     // In a real app, this would handle the transaction
     alert('Reward claimed! 🎉');
   };
@@ -293,4 +293,4 @@ const PointsRewards: React.FC = () => {
   );
 };
 
-export default PointsRewards;
+export default PointsRewards1;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Trophy, Medal, Star, Award, TrendingUp, Target, Calendar, Clock } from 'lucide-react';
 
-const Dashboard: React.FC = () => {
+const Dashboard1 = () => {
   const [selectedChart, setSelectedChart] = useState('assignments');
 
   const assignmentData = [
@@ -232,4 +232,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboard1;

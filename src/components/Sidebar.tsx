@@ -9,9 +9,9 @@ interface SidebarProps {
 
 const navigation = [
   { name: 'Home', href: '/', icon: Home },
-  { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-  { name: 'Assignments', href: '/assignments', icon: BookOpen },
-  { name: 'Community', href: '/community', icon: Users },
+  { name: 'Dashboard', href: '/dashboard1', icon: BarChart3 },
+  { name: 'Assignments', href: '/assignments1', icon: BookOpen },
+  { name: 'Community', href: '/community1', icon: Users },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {

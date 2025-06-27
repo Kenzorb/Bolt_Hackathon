@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Check, Trash2, Clock, User, Star, Calendar } from 'lucide-react';
 
-const Tasks: React.FC = () => {
+const Tasks1 = () => {
   const [newTask, setNewTask] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -82,13 +82,13 @@ const Tasks: React.FC = () => {
     }
   };
 
-  const toggleTask = (id: number) => {
+  const toggleTask = (id) => {
     setTasks(tasks.map(task => 
       task.id === id ? { ...task, completed: !task.completed } : task
     ));
   };
 
-  const deleteTask = (id: number) => {
+  const deleteTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id));
   };
 
@@ -99,7 +99,7 @@ const Tasks: React.FC = () => {
   const completedTasks = tasks.filter(task => task.completed).length;
   const totalPoints = tasks.filter(task => task.completed).reduce((sum, task) => sum + task.points, 0);
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (priority) => {
     switch (priority) {
       case 'high': return 'border-l-red-500 bg-red-50';
       case 'medium': return 'border-l-yellow-500 bg-yellow-50';
@@ -108,7 +108,7 @@ const Tasks: React.FC = () => {
     }
   };
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category) => {
     switch (category) {
       case 'academic': return 'text-blue-600 bg-blue-100';
       case 'personal': return 'text-green-600 bg-green-100';
@@ -267,4 +267,4 @@ const Tasks: React.FC = () => {
   );
 };
 
-export default Tasks;
+export default Tasks1;

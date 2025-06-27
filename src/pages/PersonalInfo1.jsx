@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Edit, Save, X, MapPin, Book, Star, Award } from 'lucide-react';
 
-const PersonalInfo: React.FC = () => {
+const PersonalInfo1 = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     name: 'Alex Johnson',
@@ -42,7 +42,8 @@ const PersonalInfo: React.FC = () => {
     setIsEditing(false);
   };
 
-  const handleInputChange = (field: string, value: string | number | string[]) => {
+  const handleInputChange = (field, value) => {
+    if (typeof field !== 'string') return; // basic guard
     setEditForm(prev => ({ ...prev, [field]: value }));
   };
 
@@ -53,7 +54,7 @@ const PersonalInfo: React.FC = () => {
     }
   };
 
-  const removeStrength = (index: number) => {
+  const removeStrength = (index) => {
     const updatedStrengths = editForm.strengths.filter((_, i) => i !== index);
     handleInputChange('strengths', updatedStrengths);
   };
@@ -65,7 +66,7 @@ const PersonalInfo: React.FC = () => {
     }
   };
 
-  const removeWeakness = (index: number) => {
+  const removeWeakness = (index) => {
     const updatedWeaknesses = editForm.weaknesses.filter((_, i) => i !== index);
     handleInputChange('weaknesses', updatedWeaknesses);
   };
@@ -363,4 +364,4 @@ const PersonalInfo: React.FC = () => {
   );
 };
 
-export default PersonalInfo;
+export default PersonalInfo1;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, CheckCircle, Clock, AlertCircle, FileText, Calendar, User } from 'lucide-react';
 
-const Assignments: React.FC = () => {
+const Assignments1 = () => {
   const [selectedTab, setSelectedTab] = useState('pending');
 
   const assignments = {
@@ -73,7 +73,7 @@ const Assignments: React.FC = () => {
     ]
   };
 
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'Easy': return 'text-green-600 bg-green-100';
       case 'Medium': return 'text-yellow-600 bg-yellow-100';
@@ -82,7 +82,7 @@ const Assignments: React.FC = () => {
     }
   };
 
-  const getGradeColor = (grade: string) => {
+  const getGradeColor = (grade) => {
     if (grade.includes('A')) return 'text-green-600 bg-green-100';
     if (grade.includes('B')) return 'text-blue-600 bg-blue-100';
     if (grade.includes('C')) return 'text-yellow-600 bg-yellow-100';
@@ -282,4 +282,4 @@ const Assignments: React.FC = () => {
   );
 };
 
-export default Assignments;
+export default Assignments1;
