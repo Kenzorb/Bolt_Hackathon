@@ -162,7 +162,7 @@ const Home1 = () => {
         className="fixed bottom-4 right-4 z-50"
       >
         <img
-          src="../../public/images/BoltLogo.png"
+          src="/images/BoltLogo.png"
           alt="Bolt Logo"
           className="w-20 h-auto opacity-80 hover:opacity-100 hover:scale-105 transition-all"
         />
