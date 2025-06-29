@@ -10,6 +10,16 @@ const Assignments1 = () => {
   const [feedbackView, setFeedbackView] = useState({}); 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newAssignment, setNewAssignment] = useState({
+    title: '',
+    subject: '',
+    dueDate: '',
+    points: '',
+    difficulty: 'Medium',
+    assignedBy: '',
+    description: ''
+  });
 
   const handleUploadClick = (assignmentId) => {
     setSelectedAssignmentId(assignmentId);
@@ -177,6 +187,95 @@ const Assignments1 = () => {
     
     <div className="space-y-8 animate-fade-in">
       
+      {isAddModalOpen && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-lg space-y-4">
+          <h2 className="text-lg font-bold text-gray-800">Add New Assignment</h2>
+
+          <input
+            type="text"
+            placeholder="Title"
+            className="w-full border rounded-xl px-3 py-2"
+            value={newAssignment.title}
+            onChange={(e) => setNewAssignment({ ...newAssignment, title: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Subject"
+            className="w-full border rounded-xl px-3 py-2"
+            value={newAssignment.subject}
+            onChange={(e) => setNewAssignment({ ...newAssignment, subject: e.target.value })}
+          />
+          <input
+            type="date"
+            className="w-full border rounded-xl px-3 py-2"
+            value={newAssignment.dueDate}
+            onChange={(e) => setNewAssignment({ ...newAssignment, dueDate: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="Points"
+            className="w-full border rounded-xl px-3 py-2"
+            value={newAssignment.points}
+            onChange={(e) => setNewAssignment({ ...newAssignment, points: e.target.value })}
+          />
+          <select
+            className="w-full border rounded-xl px-3 py-2"
+            value={newAssignment.difficulty}
+            onChange={(e) => setNewAssignment({ ...newAssignment, difficulty: e.target.value })}
+          >
+            <option>Easy</option>
+            <option>Medium</option>
+            <option>Hard</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Assigned By"
+            className="w-full border rounded-xl px-3 py-2"
+            value={newAssignment.assignedBy}
+            onChange={(e) => setNewAssignment({ ...newAssignment, assignedBy: e.target.value })}
+          />
+          <textarea
+            placeholder="Description"
+            className="w-full border rounded-xl px-3 py-2"
+            value={newAssignment.description}
+            onChange={(e) => setNewAssignment({ ...newAssignment, description: e.target.value })}
+          ></textarea>
+
+          <div className="flex justify-end space-x-2 pt-2">
+            <button
+              onClick={() => setIsAddModalOpen(false)}
+              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-xl hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                const newId = Date.now(); // Simple unique ID
+                setPendingAssignments(prev => [
+                  ...prev,
+                  { ...newAssignment, id: newId }
+                ]);
+                setIsAddModalOpen(false);
+                setNewAssignment({
+                  title: '',
+                  subject: '',
+                  dueDate: '',
+                  points: '',
+                  difficulty: 'Medium',
+                  assignedBy: '',
+                  description: ''
+                });
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+            >
+              Add Assignment
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
       {/* Popup: Preview OR Thank You */}
       {isPreviewOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -316,6 +415,15 @@ const Assignments1 = () => {
             <p className="text-sm text-gray-600">Overdue</p>
           </div>
         </div>
+      </div>
+
+      <div className="flex justify-end">
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+        >
+          ➕ Add
+        </button>
       </div>
 
       {/* Tabs */}
