@@ -153,6 +153,20 @@ const Home1 = () => {
           </div>
         </div>
       </div>
+
+      {/* Bolt Logo - Bottom Right Floating Link */}
+      <a
+        href="https://bolt.new"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-4 right-4 z-50"
+      >
+        <img
+          src="../../images/BoltLogo.png"
+          alt="Bolt Logo"
+          className="w-20 h-auto opacity-80 hover:opacity-100 hover:scale-105 transition-all"
+        />
+      </a>
     </div>
   );
 };

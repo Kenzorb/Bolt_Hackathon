@@ -1,6 +1,7 @@
 
 
 const express = require('express');
+require('dotenv').config(); // 👈 Add this first
 const cors = require('cors');
 const multer = require('multer');
 const fs = require('fs');
@@ -38,7 +39,7 @@ app.post('/analyze-homework', upload.single('image'), async (req, res) => {
         "error": "Unclear image"
       }
 
-      👉 Otherwise, return this JSON format:
+      👉 Otherwise, strictly return in this JSON format:
 
       {
         "subject": "Mathematics",
@@ -55,19 +56,25 @@ app.post('/analyze-homework', upload.single('image'), async (req, res) => {
         "confidenceScore": 0.87,
         "feedback": {
           "answersOnly": [
-            "Q1: x = 4",
-            "Q2: y = -2",
-            "Q3: 2x + 3 = 11 → x = 4"
+            //  // If incorrect, display only users exact written incorrect answer without working at the left side of the '|' and the right side as the correct answer without any workings.
+            "Q1: x = 4 ✅",
+            "Q2: y = -2 ✅",
+            "Q3: Your incorrect ans: x = 2 ❌ | Correct: x = 4"
           ],
           "answersWithHints": [
-            "Q1: x = 4 (Check sign when moving terms)",
-            "Q2: y = -2 (Be careful when dividing by negative)",
-            "Q3: Combine like terms first before solving"
+            // Include an answer line for every question.
+            // If the answer is correct, add “✅” at the end and do not show working
+            // If incorrect, display only users exact written incorrect answer without working at the left side of the '|' and the right side as the correct answer without any workings and a brief hint explaining the mistake.
+            "Q1: x = 4 ✅",
+            "Q2: y = -2 ✅",
+            "Q3: Your incorrect ans: x = 2 ❌ | Correct: x = 4 (Combine like terms first before solving)"
           ],
           "fullSolutions": [
-            "Q1: 2x = 8 → x = 4",
-            "Q2: -3y = 6 → y = -2",
-            "Q3: 2x + 3 = 11 → 2x = 8 → x = 4"
+            // If the answer is correct, add “✅” at the end and show working
+            // If the answer is incorrect, display only users exact written incorrect answer without working at the left side of the '|' and right side as the correct full working
+            "Q1: 2x = 8 → x = 4 ✅",
+            "Q2: -3y = 6 → y = -2 ✅",
+            "Q3: Your incorrect ans: x = 2 ❌ | Correct: 2x + 3 = 11 → 2x = 8 → x = 4 (Combine like terms first before solving)"
           ]
         }
       }
@@ -76,7 +83,7 @@ app.post('/analyze-homework', upload.single('image'), async (req, res) => {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer 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',
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({

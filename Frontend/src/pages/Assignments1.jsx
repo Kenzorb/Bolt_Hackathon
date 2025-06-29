@@ -8,6 +8,8 @@ const Assignments1 = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [feedbackView, setFeedbackView] = useState({}); 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
 
   const handleUploadClick = (assignmentId) => {
     setSelectedAssignmentId(assignmentId);
@@ -25,6 +27,8 @@ const Assignments1 = () => {
 
   const handleConfirmSubmit = async () => {
     if (!previewImage || !selectedAssignmentId) return;
+
+    setIsSubmitting(true); // Start loading
 
     const formData = new FormData();
     formData.append('image', previewImage.file);
@@ -45,7 +49,7 @@ const Assignments1 = () => {
         const { subject, estimatedGrade, feedback } = data;
 
         const completedAssignment = {
-          ...assignments.pending.find(a => a.id === selectedAssignmentId),
+          ...pendingAssignments.find(a => a.id === selectedAssignmentId),
           grade: estimatedGrade,
           subject,
           submittedDate: new Date().toISOString(),
@@ -58,15 +62,17 @@ const Assignments1 = () => {
         setCompletedAssignments(prev => [...prev, completedAssignment]);
 
         // Also remove from pending
-        assignments.pending = assignments.pending.filter(a => a.id !== selectedAssignmentId);
+        setPendingAssignments(prev => prev.filter(a => a.id !== selectedAssignmentId));
       }
     } catch (err) {
       console.error('Upload failed:', err);
       alert('Failed to upload. Please try again.');
     } finally {
       // Clean up
-      setPreviewImage(null);
-      setIsPreviewOpen(false);
+      setIsSubmitting(false); // End loading
+      //setPreviewImage(null);
+      //setIsPreviewOpen(false);
+      setShowThankYou(true); // Show Thank You message
       fileInputRef.current.value = null; // reset file input
     }
   };
@@ -141,6 +147,7 @@ const Assignments1 = () => {
   };
 
   const [completedAssignments, setCompletedAssignments] = useState(assignments.completed);
+  const [pendingAssignments, setPendingAssignments] = useState(assignments.pending);
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -159,8 +166,8 @@ const Assignments1 = () => {
   };
 
   const tabs = [
-    { id: 'pending', label: 'Pending', icon: Clock, count: assignments.pending.length },
-    { id: 'completed', label: 'Completed', icon: CheckCircle, count: assignments.completed.length },
+    { id: 'pending', label: 'Pending', icon: Clock, count: pendingAssignments.length },
+    { id: 'completed', label: 'Completed', icon: CheckCircle, count: completedAssignments.length },
     { id: 'overdue', label: 'Overdue', icon: AlertCircle, count: assignments.overdue.length }
   ];
 
@@ -170,26 +177,81 @@ const Assignments1 = () => {
     
     <div className="space-y-8 animate-fade-in">
       
-      {/* Preview popup before confirm submit*/}
+      {/* Popup: Preview OR Thank You */}
       {isPreviewOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-lg">
-            <h2 className="text-lg font-bold text-gray-800 mb-4">📷 Preview Submission</h2>
-            <img src={previewImage.url} alt="Preview" className="w-full rounded-lg mb-4 border" />
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => setIsPreviewOpen(false)}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300"
-              >
-                Close
-              </button>
-              <button
-                onClick={handleConfirmSubmit}
-                className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
-              >
-                Submit
-              </button>
-            </div>
+            {!showThankYou ? (
+              <>
+                <h2 className="text-lg font-bold text-gray-800 mb-4">📷 Preview Submission</h2>
+                <img src={previewImage.url} alt="Preview" className="w-full rounded-lg mb-4 border" />
+                <div className="flex justify-end space-x-2">
+                  <button
+                    onClick={() => {
+                      setIsPreviewOpen(false);
+                      setPreviewImage(null);
+                    }}
+                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300"
+                  >
+                    Close
+                  </button>
+                  <button
+                    onClick={handleConfirmSubmit}
+                    disabled={isSubmitting}
+                    className={`px-4 py-2 rounded-xl flex items-center justify-center space-x-2 ${
+                      isSubmitting
+                        ? 'bg-blue-400 cursor-not-allowed'
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    } text-white`}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <svg
+                          className="animate-spin h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                          ></path>
+                        </svg>
+                        <span>Submitting...</span>
+                      </>
+                    ) : (
+                      <span>Submit</span>
+                    )}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl font-bold text-center text-green-700 mb-4">✅ Thank you for submitting!</h2>
+                <p className="text-center text-gray-700 mb-6">Your assignment has been received and reviewed.</p>
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => {
+                      setIsPreviewOpen(false);
+                      setShowThankYou(false);
+                      setPreviewImage(null);
+                    }}
+                    className="px-6 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700"
+                  >
+                    Close
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -215,7 +277,9 @@ const Assignments1 = () => {
             <div className="p-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl w-fit mx-auto mb-3">
               <FileText className="w-6 h-6 text-white" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">8</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {pendingAssignments.length + completedAssignments.length + assignments.overdue.length}
+            </p>
             <p className="text-sm text-gray-600">Total Assignments</p>
           </div>
         </div>
@@ -224,7 +288,9 @@ const Assignments1 = () => {
             <div className="p-3 bg-gradient-to-r from-green-500 to-green-600 rounded-xl w-fit mx-auto mb-3">
               <CheckCircle className="w-6 h-6 text-white" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">5</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {completedAssignments.length}
+            </p>
             <p className="text-sm text-gray-600">Completed</p>
           </div>
         </div>
@@ -233,7 +299,9 @@ const Assignments1 = () => {
             <div className="p-3 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl w-fit mx-auto mb-3">
               <Clock className="w-6 h-6 text-white" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">3</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {pendingAssignments.length}
+            </p>
             <p className="text-sm text-gray-600">Pending</p>
           </div>
         </div>
@@ -242,7 +310,9 @@ const Assignments1 = () => {
             <div className="p-3 bg-gradient-to-r from-red-500 to-red-600 rounded-xl w-fit mx-auto mb-3">
               <AlertCircle className="w-6 h-6 text-white" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">1</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {assignments.overdue.length}
+            </p>
             <p className="text-sm text-gray-600">Overdue</p>
           </div>
         </div>
@@ -275,7 +345,7 @@ const Assignments1 = () => {
       <div className="space-y-6">
         {selectedTab === 'pending' && (
           <div className="space-y-4">
-            {assignments.pending.map((assignment) => (
+            {pendingAssignments.map((assignment) => (
               <div key={assignment.id} className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-300">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                   <div className="flex-1">
