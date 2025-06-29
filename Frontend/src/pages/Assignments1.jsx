@@ -1,8 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Upload, CheckCircle, Clock, AlertCircle, FileText, Calendar, User } from 'lucide-react';
 
 const Assignments1 = () => {
   const [selectedTab, setSelectedTab] = useState('pending');
+  const fileInputRef = useRef(null); // NEW
+  const [selectedAssignmentId, setSelectedAssignmentId] = useState(null); // NEW
+  const [previewImage, setPreviewImage] = useState(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const handleUploadClick = (assignmentId) => {
+    setSelectedAssignmentId(assignmentId);
+    fileInputRef.current.click(); // Open file picker
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file || !selectedAssignmentId) return;
+
+    const imageUrl = URL.createObjectURL(file); // Creates local preview URL
+    setPreviewImage({ file, url: imageUrl });
+    setIsPreviewOpen(true);
+  };
+
+  const handleConfirmSubmit = async () => {
+    if (!previewImage || !selectedAssignmentId) return;
+
+    const formData = new FormData();
+    formData.append('image', previewImage.file);
+    formData.append('assignmentId', selectedAssignmentId);
+
+    try {
+      const response = await fetch('http://localhost:3001/analyze-homework', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert('Error: ' + data.error);
+      } else {
+        alert(
+          `📘 Subject: ${subject}\n` +
+          `📊 Estimated Grade: ${estimatedGrade}\n\n` +
+          `🧠 Topics Breakdown:\n${topicsBreakdown}\n\n` +
+          `⚠️ Focus Areas:\n- ${focusAreas.join('\n- ')}\n\n` +
+          `✅ Answers Only:\n${answersOnly}\n\n` +
+          `💡 Answers with Hints:\n${answersWithHints}\n\n` +
+          `🧾 Full Solutions:\n${fullSolutions}`
+        );
+      }
+    } catch (err) {
+      console.error('Upload failed:', err);
+      alert('Failed to upload. Please try again.');
+    } finally {
+      // Clean up
+      setPreviewImage(null);
+      setIsPreviewOpen(false);
+      fileInputRef.current.value = null; // reset file input
+    }
+  };
 
   const assignments = {
     pending: [
@@ -95,8 +152,45 @@ const Assignments1 = () => {
     { id: 'overdue', label: 'Overdue', icon: AlertCircle, count: assignments.overdue.length }
   ];
 
+
   return (
+    
+    
     <div className="space-y-8 animate-fade-in">
+      
+      {/* Preview popup before confirm submit*/}
+      {isPreviewOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-lg">
+            <h2 className="text-lg font-bold text-gray-800 mb-4">📷 Preview Submission</h2>
+            <img src={previewImage.url} alt="Preview" className="w-full rounded-lg mb-4 border" />
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setIsPreviewOpen(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleConfirmSubmit}
+                className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden file input for uploading images WHAT DOES THIS DO?*/}
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        style={{ display: 'none' }}
+      />
+      
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-gray-900">Assignments</h1>
         <p className="text-xl text-gray-600">Submit and track your academic work</p>
@@ -195,7 +289,7 @@ const Assignments1 = () => {
                     </div>
                   </div>
                   <div className="flex space-x-3">
-                    <button className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-xl hover:shadow-lg transition-all duration-300">
+                    <button onClick={() => handleUploadClick(assignment.id)} className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-xl hover:shadow-lg transition-all duration-300">
                       <Upload className="w-4 h-4" />
                       <span>Submit</span>
                     </button>
