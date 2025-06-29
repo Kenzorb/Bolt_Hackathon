@@ -45,7 +45,7 @@ const Assignments1 = () => {
     formData.append('assignmentId', selectedAssignmentId);
 
     try {
-      const response = await fetch('http://localhost:3001/analyze-homework', {
+      const response = await fetch('https://snappystreak-backend.onrender.com/analyze-homework', {
         method: 'POST',
         body: formData,
       });
