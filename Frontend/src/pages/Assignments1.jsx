@@ -7,6 +7,7 @@ const Assignments1 = () => {
   const [selectedAssignmentId, setSelectedAssignmentId] = useState(null); // NEW
   const [previewImage, setPreviewImage] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [feedbackView, setFeedbackView] = useState({}); 
 
   const handleUploadClick = (assignmentId) => {
     setSelectedAssignmentId(assignmentId);
@@ -40,15 +41,24 @@ const Assignments1 = () => {
       if (data.error) {
         alert('Error: ' + data.error);
       } else {
-        alert(
-          `📘 Subject: ${subject}\n` +
-          `📊 Estimated Grade: ${estimatedGrade}\n\n` +
-          `🧠 Topics Breakdown:\n${topicsBreakdown}\n\n` +
-          `⚠️ Focus Areas:\n- ${focusAreas.join('\n- ')}\n\n` +
-          `✅ Answers Only:\n${answersOnly}\n\n` +
-          `💡 Answers with Hints:\n${answersWithHints}\n\n` +
-          `🧾 Full Solutions:\n${fullSolutions}`
-        );
+        // ✅ Destructure the response properly
+        const { subject, estimatedGrade, feedback } = data;
+
+        const completedAssignment = {
+          ...assignments.pending.find(a => a.id === selectedAssignmentId),
+          grade: estimatedGrade,
+          subject,
+          submittedDate: new Date().toISOString(),
+          feedbackFull: feedback.fullSolutions || [],
+          feedbackHints: feedback.answersWithHints || [],
+          feedbackAnswers: feedback.answersOnly || [],
+        };
+
+        // Then push into state array:
+        setCompletedAssignments(prev => [...prev, completedAssignment]);
+
+        // Also remove from pending
+        assignments.pending = assignments.pending.filter(a => a.id !== selectedAssignmentId);
       }
     } catch (err) {
       console.error('Upload failed:', err);
@@ -129,6 +139,8 @@ const Assignments1 = () => {
       }
     ]
   };
+
+  const [completedAssignments, setCompletedAssignments] = useState(assignments.completed);
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -302,34 +314,63 @@ const Assignments1 = () => {
 
         {selectedTab === 'completed' && (
           <div className="space-y-4">
-            {assignments.completed.map((assignment) => (
-              <div key={assignment.id} className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">{assignment.title}</h3>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getGradeColor(assignment.grade)}`}>
-                        {assignment.grade}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 mb-3">{assignment.feedback}</p>
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>Submitted: {new Date(assignment.submittedDate).toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <User className="w-4 h-4" />
-                        <span>By: {assignment.assignedBy}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <span className="font-medium text-green-600">{assignment.points} points earned</span>
-                      </div>
-                    </div>
+            {completedAssignments.map((assignment) => {
+              const view = feedbackView[assignment.id];
+              let displayContent = '';
+
+              if (view === 'answers') displayContent = assignment.feedbackAnswers?.join('\n') || 'No answers provided.';
+              else if (view === 'hints') displayContent = assignment.feedbackHints?.join('\n') || 'No hints available.';
+              else if (view === 'full') displayContent = assignment.feedbackFull?.join('\n') || 'No full solution provided.';
+
+              return (
+                <div key={assignment.id} className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900">{assignment.title}</h3>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getGradeColor(assignment.grade)}`}>
+                      {assignment.grade}
+                    </span>
+                  </div>
+
+                  <p className="text-gray-600 mb-3">Subject: {assignment.subject}</p>
+                  <p className="text-gray-600 mb-2">Assigned by: {assignment.assignedBy}</p>
+
+                  {/* Feedback Toggle Buttons */}
+                  <div className="flex space-x-2 mt-2">
+                    <button
+                      onClick={() => setFeedbackView(prev => ({ ...prev, [assignment.id]: 'answers' }))}
+                      className={`px-3 py-1 rounded ${view === 'answers' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    >
+                      Answers Only
+                    </button>
+                    <button
+                      onClick={() => setFeedbackView(prev => ({ ...prev, [assignment.id]: 'hints' }))}
+                      className={`px-3 py-1 rounded ${view === 'hints' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    >
+                      With Hints
+                    </button>
+                    <button
+                      onClick={() => setFeedbackView(prev => ({ ...prev, [assignment.id]: 'full' }))}
+                      className={`px-3 py-1 rounded ${view === 'full' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    >
+                      Full Solutions
+                    </button>
+                  </div>
+
+                  {view && (
+                    <pre className="mt-4 bg-gray-50 p-4 rounded text-sm whitespace-pre-wrap border">
+                      {displayContent}
+                    </pre>
+                  )}
+
+                  <div className="text-sm text-gray-500 mt-4 flex items-center space-x-4">
+                    <Calendar className="w-4 h-4" />
+                    <span>Submitted: {new Date(assignment.submittedDate).toLocaleDateString()}</span>
+                    <User className="w-4 h-4" />
+                    <span>{assignment.points} pts earned</span>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

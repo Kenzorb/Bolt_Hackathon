@@ -76,7 +76,7 @@ app.post('/analyze-homework', upload.single('image'), async (req, res) => {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer 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',
+        'Authorization': 'Bearer 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',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
